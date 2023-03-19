@@ -51,16 +51,21 @@ class boltzmanmachine:
         self.mb_t0 = 0
         self.mw_t0 = 0
         
-    def load(w, a, b):
-        '''
-        Load a previously trained model by using its weigths and biases
-        w: network weights
-        a: visible bias
-        b: hidden bias
-        '''
-        self.w = w
-        self.a = a
-        self.b = b
+        self.batch_counter = 0
+        
+    def load_model(self, file_name):
+        model = np.load(file_name)
+        
+        self.w = model['w']
+        self.a = model['a']
+        self.b = model['b']
+        
+        
+        
+    def save_model(self, file_name):
+        np.savez(file_name, a=self.a, b=self.b, w=self.w)
+        
+        
         
     def init_avg(self):
         '''
@@ -227,3 +232,44 @@ class boltzmanmachine:
         self.a = self.a + eta_t*ma_t_hat/(np.sqrt(sa_t_hat) + epsilon)
         self.b = self.b + eta_t*mb_t_hat/(np.sqrt(sb_t_hat) + epsilon)
         self.w = self.w + eta_t*mw_t_hat/(np.sqrt(sw_t_hat) + epsilon)
+        
+    def train(self, data, learning_rate, batch_size, n_contrastive_div, Amp_training, Algorithm, epoch=1):
+        
+        if self.batch_counter == 0:
+            self.init_avg()
+            
+        v_k = np.copy(data)
+        vf = np.copy(data)
+        
+        for i in np.arange(n_contrastive_div):
+            h = self.positive(vf, Amp_training)
+            vf = self.negative(h, Amp_training)
+        hf = self.positive(vf, Amp_training)
+        
+        self.update_vh(v_k, vf, h, hf, batch_size)
+        
+        self.batch_counter += 1
+        
+        if self.batch_counter == batch_size:
+            if Algorithm == 'SGD':
+                self.SGD(learning_rate)
+            if Algorithm == 'RMSprop':
+                self.RMSprop(learning_rate)
+            if Algorithm == 'Adam':
+                self.ADAM(l_rate, epoch+1)
+                
+            self.batch_counter = 0
+
+
+    def gen_fantasy(self, data, Amp_gen):
+        
+        vf = np.zeros_like(data)
+        N = data.shape[0]
+        
+        for k in range(N):
+            # positive CD phase: generating h 
+            h = self.positive(data[k],Amp_gen)
+            # negative CD phase: generating fantasy vf with low T == large GAP
+            vf[k] = self.negative(h,Amp_gen)
+            
+        return vf

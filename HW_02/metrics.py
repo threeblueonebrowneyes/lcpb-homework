@@ -54,6 +54,9 @@ def JS_divergence(p,q):
     return js
 
 def p(v, spin=True):
-    if spin: vp = (v+1)/2 
+    
+    if spin:
+        vp = (v+1)/2 
+        
     p = np.sum(vp, axis=0)/v.shape[0]
     return p
