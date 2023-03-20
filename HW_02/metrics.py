@@ -46,7 +46,9 @@ def sequence_error(v1, spin=True, vmin=-1):
     return sum(error)*100/len(df)
 
 def KL_divergence(p, q):
-    return np.sum(p*np.log(p/q))
+    pp = np.copy(p)
+    pp[pp==0]=1.
+    return np.sum(p*np.log(pp/q))
 
 def JS_divergence(p,q):
     m = 0.5*(p+q)

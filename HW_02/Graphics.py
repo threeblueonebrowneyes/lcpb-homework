@@ -38,6 +38,6 @@ def distr_ami(v, file_name):
 
     data = np.vstack((n_ami1, n_ami2, n_ami3, n_ami4,n_ami5))
 
-    df = pd.DataFrame(data/10000, columns=['csi1', 'csi2','csi3','csi4'])
+    df = pd.DataFrame(data/10000, columns=['csi1', 'csi2','csi3','csi4'], index=['1', '2', '3', '4', '5'])
     df.plot(kind='bar')
     plt.savefig(file_name)
