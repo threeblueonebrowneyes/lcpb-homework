@@ -1,0 +1,7 @@
+Complete -1,1 temperature tuning
+Tuning 01 temperature
+Draw heatmap on temperatures (both 10 and -11)
+Choose best temp and train with CD-n
+Plot graph of CD-n vs accuracy with best temp
+
+
