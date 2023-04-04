@@ -127,3 +127,4 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+HW_02/Models/RMSprop_015_1_spin.npz:Zone.Identifier
